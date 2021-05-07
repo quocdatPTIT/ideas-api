@@ -28,7 +28,7 @@ export class IdeaService {
       const result =  this.ideaRepository.createQueryBuilder("idea")
         .select(["idea.id", "idea.idea", "idea.description", "idea.creationTime"])
         .where("idea.is_deleted = false")
-        .skip(skip).take(take)
+        .offset(skip).limit(take)
         .getManyAndCount();
   
       return result;
