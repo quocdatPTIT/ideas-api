@@ -7,5 +7,5 @@
   "database": "app-ideas",
   "synchronize": true,
   "logging": true,
-  "entities": ["./dist/**/*.entity{.ts,.js}"]
+  "entities": ["./src/**/*.entity.ts", "./dist/**/*.entity.js"]
 }

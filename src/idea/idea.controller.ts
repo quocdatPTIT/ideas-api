@@ -1,5 +1,15 @@
+import { ValidationIdeaDto } from './pipe/validation-idea-dto.pipe';
 import { BaseResponse } from 'src/models/base-response.model';
-import { Body, Controller, Delete, Get, HttpStatus, Param, Post, Put } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpStatus,
+  Param,
+  Post,
+  Put,
+} from '@nestjs/common';
 
 import { IdeaDto } from './dtos/idea.dto';
 import { IdeaEntity } from './idea.entity';
@@ -11,21 +21,21 @@ export class IdeaController {
 
   @Post('get-all-ideas')
   async getALlIdeas(@Body('skip') skip: number, @Body('take') take: number) {
-    const ideas =  await this.ideaService.getALlIdeas(skip, take);
+    const ideas = await this.ideaService.getALlIdeas(skip, take);
     const response: BaseResponse<[IdeaEntity[], number]> = {
       statusCode: HttpStatus.OK,
       items: ideas[0],
-      totalItems: ideas[1]
+      totalItems: ideas[1],
     };
     return response;
   }
 
   @Post('create-idea')
-  async createIdea(@Body() newIdea: IdeaDto) {
+  async createIdea(@Body(new ValidationIdeaDto()) newIdea: IdeaDto) {
     const isCreated = await this.ideaService.createIdea(newIdea);
     const response: BaseResponse<boolean> = {
       statusCode: HttpStatus.CREATED,
-      isDeleted: isCreated
+      isDeleted: isCreated,
     };
     return response;
   }
@@ -35,7 +45,7 @@ export class IdeaController {
     const idea = await this.ideaService.getIdeaById(id);
     const response: BaseResponse<IdeaEntity> = {
       statusCode: HttpStatus.OK,
-      item: idea ? idea : null
+      item: idea ? idea : null,
     };
     return response;
   }
@@ -45,7 +55,7 @@ export class IdeaController {
     const updatedIdea = await this.ideaService.updateIdea(id, idea);
     const response: BaseResponse<IdeaEntity> = {
       statusCode: HttpStatus.OK,
-      item: updatedIdea ? updatedIdea : null
+      item: updatedIdea ? updatedIdea : null,
     };
     return response;
   }
@@ -55,7 +65,7 @@ export class IdeaController {
     const isDeleted = await this.ideaService.deleteIdea(id);
     const response: BaseResponse<boolean> = {
       statusCode: HttpStatus.OK,
-      isDeleted: isDeleted
+      isDeleted: isDeleted,
     };
     return response;
   }

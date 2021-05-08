@@ -2,7 +2,7 @@ export interface BaseResponse<T> {
   statusCode: number;
   isDeleted?: boolean;
   message?: string;
-  items?: any[],
+  items?: any[];
   item?: any;
   totalItems?: number;
 }

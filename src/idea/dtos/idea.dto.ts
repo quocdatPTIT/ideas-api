@@ -1,3 +1,9 @@
+import { IsString } from 'class-validator';
+
 export class IdeaDto {
-  constructor(public title: string, public description: string) {}
+  @IsString()
+  title: string;
+
+  @IsString()
+  description: string;
 }

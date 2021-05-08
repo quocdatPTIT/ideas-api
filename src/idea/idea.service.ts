@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
@@ -7,11 +11,15 @@ import { IdeaDto } from './dtos/idea.dto';
 
 @Injectable()
 export class IdeaService {
-  constructor(@InjectRepository(IdeaEntity) private ideaRepository: Repository<IdeaEntity>) {}
+  constructor(
+    @InjectRepository(IdeaEntity)
+    private ideaRepository: Repository<IdeaEntity>,
+  ) {}
 
   async createIdea(newIdea: IdeaDto): Promise<boolean> {
     try {
-      await this.ideaRepository.createQueryBuilder()
+      await this.ideaRepository
+        .createQueryBuilder()
         .insert()
         .into(IdeaEntity)
         .values({ idea: newIdea.title, description: newIdea.description })
@@ -23,15 +31,23 @@ export class IdeaService {
     }
   }
 
-  async getALlIdeas(skip: number, take: number): Promise<[IdeaEntity[], number]> {
+  async getALlIdeas(
+    skip: number,
+    take: number,
+  ): Promise<[IdeaEntity[], number]> {
     try {
-      const result =  this.ideaRepository.createQueryBuilder("idea")
-        .select(["idea.id", "idea.idea", "idea.description", "idea.creationTime"])
-        .where("idea.is_deleted = false")
-        .offset(skip).limit(take)
+      return this.ideaRepository
+        .createQueryBuilder('idea')
+        .select([
+          'idea.id',
+          'idea.idea',
+          'idea.description',
+          'idea.creationTime',
+        ])
+        .where('idea.is_deleted = false')
+        .offset(skip)
+        .limit(take)
         .getManyAndCount();
-  
-      return result;
     } catch (error) {
       throw new BadRequestException('Oops!!!');
     }
@@ -47,16 +63,17 @@ export class IdeaService {
 
   async updateIdea(ideaId: string, idea: IdeaDto): Promise<IdeaEntity> {
     try {
-      await this.ideaRepository.createQueryBuilder("idea")
+      await this.ideaRepository
+        .createQueryBuilder('idea')
         .update(IdeaEntity)
         .set({
           idea: idea.title,
-          description: idea.description
+          description: idea.description,
         })
-        .where("id = :id", { id: ideaId })
+        .where('id = :id', { id: ideaId })
         .execute();
 
-        return await this.queryIdeaById(ideaId);
+      return await this.queryIdeaById(ideaId);
     } catch (error) {
       throw new NotFoundException('Could not find idea');
     }
@@ -64,12 +81,13 @@ export class IdeaService {
 
   async deleteIdea(ideaId: string): Promise<boolean> {
     try {
-      await this.ideaRepository.createQueryBuilder("idea")
+      await this.ideaRepository
+        .createQueryBuilder('idea')
         .update(IdeaEntity)
-        .set({is_deleted: true})
-        .where("id = :id", { id: ideaId })
+        .set({ is_deleted: true })
+        .where('id = :id', { id: ideaId })
         .execute();
-  
+
       return true;
     } catch (error) {
       throw new NotFoundException('Could not find idea');
@@ -77,11 +95,10 @@ export class IdeaService {
   }
 
   private async queryIdeaById(ideaId: string) {
-    const result = this.ideaRepository.createQueryBuilder("idea")
-      .select(["idea.id", "idea.idea", "idea.description", "idea.creationTime"])
-      .where("idea.id = :id and idea.is_deleted = false", { id: ideaId })
+    return this.ideaRepository
+      .createQueryBuilder('idea')
+      .select(['idea.id', 'idea.idea', 'idea.description', 'idea.creationTime'])
+      .where('idea.id = :id and idea.is_deleted = false', { id: ideaId })
       .getOne();
-  
-    return result;
   }
 }
