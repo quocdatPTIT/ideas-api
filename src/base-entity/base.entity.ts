@@ -1,4 +1,4 @@
-import { Column, PrimaryGeneratedColumn } from "typeorm";
+import { Column, PrimaryGeneratedColumn } from 'typeorm';
 
 export class BaseEntity {
   @PrimaryGeneratedColumn('uuid')
@@ -7,10 +7,18 @@ export class BaseEntity {
   @Column({ type: 'boolean', default: false })
   is_deleted: boolean;
 
-  @Column({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP', name: 'creation_time' })
+  @Column({
+    type: 'timestamptz',
+    default: () => 'CURRENT_TIMESTAMP',
+    name: 'creation_time',
+  })
   creationTime: Date;
 
-  @Column({ type: 'timestamptz', nullable: true, name: 'last_modification_time' })
+  @Column({
+    type: 'timestamptz',
+    nullable: true,
+    name: 'last_modification_time',
+  })
   lastModificationTime?: Date;
 
   @Column({ type: 'uuid', nullable: true, name: 'creation_by' })

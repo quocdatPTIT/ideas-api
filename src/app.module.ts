@@ -9,9 +9,10 @@ import { LoggingInterceptor } from './shared/logging.interceptor';
 import { HttpErrorFilter } from './shared/http-error.filter';
 
 import { IdeaModule } from './idea/idea.module';
+import { UserModule } from './user/user.module';
 
 @Module({
-  imports: [TypeOrmModule.forRoot(), IdeaModule],
+  imports: [TypeOrmModule.forRoot(), IdeaModule, UserModule],
   controllers: [AppController],
   providers: [
     AppService,

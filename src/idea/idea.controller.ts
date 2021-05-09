@@ -1,5 +1,3 @@
-import { ValidationIdeaDto } from './pipe/validation-idea-dto.pipe';
-import { BaseResponse } from 'src/models/base-response.model';
 import {
   Body,
   Controller,
@@ -9,13 +7,16 @@ import {
   Param,
   Post,
   Put,
+  UsePipes,
 } from '@nestjs/common';
-
 import { IdeaDto } from './dtos/idea.dto';
+
 import { IdeaEntity } from './idea.entity';
 import { IdeaService } from './idea.service';
+import { BaseResponse } from 'src/models/base-response.model';
+import { Validation } from '../shared/validation.pipe';
 
-@Controller('idea')
+@Controller('api/ideas')
 export class IdeaController {
   constructor(private readonly ideaService: IdeaService) {}
 
@@ -31,7 +32,8 @@ export class IdeaController {
   }
 
   @Post('create-idea')
-  async createIdea(@Body(new ValidationIdeaDto()) newIdea: IdeaDto) {
+  @UsePipes(new Validation())
+  async createIdea(@Body() newIdea: IdeaDto) {
     const isCreated = await this.ideaService.createIdea(newIdea);
     const response: BaseResponse<boolean> = {
       statusCode: HttpStatus.CREATED,
