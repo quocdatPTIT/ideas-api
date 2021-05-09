@@ -13,6 +13,20 @@ export class UserService {
     private userRepository: Repository<UserEntity>,
   ) {}
 
+  async getAllUsers(): Promise<[UserEntity[], number]> {
+    try {
+      return await this.userRepository
+        .createQueryBuilder('user')
+        .select(['user.id', 'user.username', 'user.creationTime'])
+        .getManyAndCount();
+    } catch (err) {
+      throw new HttpException(
+        `Invalid request ${err.message || err.name}`,
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+  }
+
   async login(data: UserDto): Promise<UserResponse> {
     const { username, password } = data;
     const user = await this.userRepository
