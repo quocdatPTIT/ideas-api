@@ -8,15 +8,18 @@ import { Repository } from 'typeorm';
 
 import { IdeaEntity } from './idea.entity';
 import { IdeaDto } from './dtos/idea.dto';
+import { UserEntity } from '../user/user.entity';
 
 @Injectable()
 export class IdeaService {
   constructor(
     @InjectRepository(IdeaEntity)
     private ideaRepository: Repository<IdeaEntity>,
+    @InjectRepository(UserEntity)
+    private userRepository: Repository<UserEntity>,
   ) {}
 
-  async createIdea(newIdea: IdeaDto): Promise<boolean> {
+  async createIdea(userId: string, newIdea: IdeaDto): Promise<boolean> {
     try {
       await this.ideaRepository
         .createQueryBuilder()
@@ -43,7 +46,10 @@ export class IdeaService {
           'idea.idea',
           'idea.description',
           'idea.creationTime',
+          'user.id',
+          'user.username',
         ])
+        .innerJoin('idea.author', 'user')
         .where('idea.is_deleted = false')
         .offset(skip)
         .limit(take)

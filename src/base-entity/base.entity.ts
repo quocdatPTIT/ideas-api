@@ -1,4 +1,4 @@
-import { Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 
 export class BaseEntity {
   @PrimaryGeneratedColumn('uuid')
@@ -19,10 +19,8 @@ export class BaseEntity {
     nullable: true,
     name: 'last_modification_time',
   })
+  @UpdateDateColumn()
   lastModificationTime?: Date;
-
-  @Column({ type: 'uuid', nullable: true, name: 'creation_by' })
-  creationBy: string;
 
   @Column({ type: 'uuid', nullable: true, name: 'last_modification_by' })
   lastModificationBy: string;

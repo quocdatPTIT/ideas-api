@@ -4,20 +4,26 @@ import {
   Delete,
   Get,
   HttpStatus,
+  Logger,
   Param,
   Post,
   Put,
+  UseGuards,
   UsePipes,
 } from '@nestjs/common';
-import { IdeaDto } from './dtos/idea.dto';
 
-import { IdeaEntity } from './idea.entity';
-import { IdeaService } from './idea.service';
-import { BaseResponse } from 'src/models/base-response.model';
 import { Validation } from '../shared/validation.pipe';
+import { AuthGuard } from '../shared/auth.guard';
+import { User } from '../user/user.decorator';
+
+import { IdeaService } from './idea.service';
+import { IdeaEntity } from './idea.entity';
+import { IdeaDto } from './dtos/idea.dto';
+import { BaseResponse } from 'src/models/base-response.model';
 
 @Controller('api/ideas')
 export class IdeaController {
+  private logger = new Logger('IdeaController');
   constructor(private readonly ideaService: IdeaService) {}
 
   @Post('get-all-ideas')
@@ -32,14 +38,16 @@ export class IdeaController {
   }
 
   @Post('create-idea')
+  @UseGuards(new AuthGuard())
   @UsePipes(new Validation())
-  async createIdea(@Body() newIdea: IdeaDto) {
-    const isCreated = await this.ideaService.createIdea(newIdea);
-    const response: BaseResponse<boolean> = {
-      statusCode: HttpStatus.CREATED,
-      isDeleted: isCreated,
-    };
-    return response;
+  async createIdea(@User('id') userId, @Body() data: IdeaDto) {
+    this.logData({ userId, data });
+    // const isCreated = await this.ideaService.createIdea(userId, data);
+    // const response: BaseResponse<boolean> = {
+    //   statusCode: HttpStatus.CREATED,
+    //   isDeleted: isCreated,
+    // };
+    // return response;
   }
 
   @Get('get-idea-by-id/:id')
@@ -70,5 +78,10 @@ export class IdeaController {
       isDeleted: isDeleted,
     };
     return response;
+  }
+
+  private logData(options: any) {
+    options.userId && this.logger.log('USER ' + JSON.stringify(options.userId));
+    options.data && this.logger.log('DATA ' + JSON.stringify(options.data));
   }
 }
